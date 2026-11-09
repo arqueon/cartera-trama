@@ -1,0 +1,51 @@
+/* Trama (credenciales comunitarias, potenciacomun.org). Colours, type and
+   radius come from the project's brand file (marca/trama.css, decision 0008);
+   the MUI palette in themeConfig.ts repeats them. Fonts are self-hosted
+   (OFL 1.1, @fontsource 5.3.0, latin subset; licences next to them). */
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/atkinson-hyperlegible-latin-400-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/atkinson-hyperlegible-latin-400-italic.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/atkinson-hyperlegible-latin-700-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./fonts/fraunces-latin-full-normal.woff2') format('woff2');
+}
+
+html[data-theme='trama'] {
+  --trama-anil: #2b3a73;
+  --trama-grana: #9e2f35;
+  --trama-maiz: #d9a23a;
+  --trama-milpa: #4e6b3a;
+  --trama-papel: #f5efe3;
+}
+
+html[data-theme='trama'] h1,
+html[data-theme='trama'] h2,
+html[data-theme='trama'] h3 {
+  font-variation-settings:
+    'SOFT' 100,
+    'opsz' 96;
+}

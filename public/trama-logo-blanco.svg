@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Trama">
+  <style>
+    .a { stroke: #fffdf8 } .g { stroke: #f2b3ae }
+  </style>
+  <g fill="none" stroke-linejoin="round" stroke-width="4.5">
+    <path class="a" d="M17 7 31 24 17 41 3 24z"/>
+    <path class="g" d="M31 7 45 24 31 41 17 24z"/>
+    <path class="a" d="M24 15.5 31 24"/>
+  </g>
+</svg>

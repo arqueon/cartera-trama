@@ -4,6 +4,7 @@ import fixture from '../fixtures/udg-ob3.json'
 import {
   criteriaText,
   getUdgCredential,
+  isDetailIssuer,
   ob3Recipient,
   programOf,
   rubricLevel,
@@ -182,5 +183,21 @@ describe('programOf', () => {
 
   it('is empty without a program', () => {
     expect(programOf({})).toBe('')
+  })
+})
+
+describe('isDetailIssuer', () => {
+  const listed = 'did:web:example.org, did:web:other.example'
+  it('matches a listed DID and the organization DIDs under it', () => {
+    expect(isDetailIssuer('did:web:example.org', listed)).toBe(true)
+    expect(isDetailIssuer('did:web:example.org:org:escuela', listed)).toBe(true)
+    expect(isDetailIssuer('did:web:other.example', listed)).toBe(true)
+  })
+  it('does not match look-alike hosts, empty ids or an empty list', () => {
+    expect(isDetailIssuer('did:web:example.org.evil', listed)).toBe(false)
+    expect(isDetailIssuer('did:web:example.organic', listed)).toBe(false)
+    expect(isDetailIssuer('', listed)).toBe(false)
+    expect(isDetailIssuer('did:web:example.org', '')).toBe(false)
+    expect(isDetailIssuer('did:web:example.org', undefined)).toBe(false)
   })
 })

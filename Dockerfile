@@ -23,6 +23,7 @@ ARG VITE_APP_LOGO_URL=/udg-placeholder.svg
 # Square 512 px PNG icons (official ones copied into public/ at build time).
 ARG VITE_APP_ICON_URL
 ARG VITE_APP_MASKABLE_ICON_URL
+ARG VITE_OB3_DETAIL_ISSUERS
 ARG UDG_SOURCE_URL=/source.html
 ENV VITE_UDG_SOURCE_URL=$UDG_SOURCE_URL
 ARG VITE_WAS_SERVER_URL

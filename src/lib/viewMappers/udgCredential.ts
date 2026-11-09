@@ -80,6 +80,30 @@ export function criteriaText(value: unknown): string {
   return /^criteria\s+not\s+specified[.!]?$/i.test(narrative) ? '' : narrative
 }
 
+/**
+ * Issuers whose badges also get the detailed card, from the build-time
+ * VITE_OB3_DETAIL_ISSUERS (comma-separated DIDs). A listed did:web also
+ * covers the DIDs under it, so `did:web:example.org` matches each
+ * organization's `did:web:example.org:org:<slug>`. Layout only, never trust.
+ *
+ * @param issuerId {string}
+ * @param [configured] {string}
+ * @returns {boolean}
+ */
+export function isDetailIssuer(
+  issuerId: string,
+  configured: string | undefined = import.meta.env.VITE_OB3_DETAIL_ISSUERS
+): boolean {
+  if (!issuerId) {
+    return false
+  }
+  return (configured ?? '')
+    .split(',')
+    .map(entry => entry.trim())
+    .filter(Boolean)
+    .some(did => issuerId === did || issuerId.startsWith(`${did}:`))
+}
+
 export function getUdgCredential(vc: IVerifiableCredential) {
   const types = Array.isArray(vc.type) ? vc.type : [vc.type]
   const issuer = recordOf(vc.issuer)
@@ -88,7 +112,8 @@ export function getUdgCredential(vc: IVerifiableCredential) {
     issuerId === 'did:web:microcredenciales.arqueonautis.org' ||
     ['Universidad de Guadalajara', 'Consola de gestores UDGPlus'].includes(
       textOf(issuer.name)
-    )
+    ) ||
+    isDetailIssuer(issuerId)
   const subjects = recordsOf(vc.credentialSubject)
   // Multi-subject credentials retain the generic view rather than hiding people.
   if (

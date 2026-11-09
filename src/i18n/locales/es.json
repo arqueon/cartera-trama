@@ -8,7 +8,8 @@
     "themes": {
       "default": "Predeterminado",
       "west-coast": "West Coast",
-      "udg": "UdeG"
+      "udg": "UdeG",
+      "trama": "Trama"
     },
     "logOut": "Cerrar sesión",
     "logIn": "Iniciar sesión",

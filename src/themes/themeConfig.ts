@@ -22,6 +22,8 @@ export type ThemePaletteValues = {
 
 export type ThemeDefinition = {
   fontFamily: string
+  /** Display face for h1–h6; body text keeps fontFamily. */
+  headingFontFamily?: string
   palette: Record<ThemeMode, ThemePaletteValues>
   muiComponents?: ThemeOptions['components']
 }
@@ -32,7 +34,63 @@ const WEST_COAST_FONT =
 const DEFAULT_FONT =
   '"Inter Variable", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
 
+const TRAMA_FONT =
+  '"Atkinson Hyperlegible", "Inter Variable", system-ui, sans-serif'
+
+const TRAMA_HEADING_FONT = '"Fraunces", Georgia, serif'
+
+// Trama's añil, fixed in both modes: the logo on the bar is the white one.
+const TRAMA_BAR = '#2b3a73'
+
 export const THEME_DEFINITIONS: Record<AppThemeId, ThemeDefinition> = {
+  trama: {
+    fontFamily: TRAMA_FONT,
+    headingFontFamily: TRAMA_HEADING_FONT,
+    muiComponents: {
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            backgroundColor: TRAMA_BAR,
+            backgroundImage: 'none',
+            color: '#fffdf8',
+            '& .MuiTypography-root, & .MuiIconButton-root, & .MuiButton-root, & .MuiInputBase-root, & .MuiSelect-icon':
+              {
+                color: 'inherit'
+              },
+            '& .MuiButton-outlined, & .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'rgba(255, 253, 248, 0.65)'
+            }
+          }
+        }
+      },
+      MuiButton: {
+        styleOverrides: {
+          root: { borderRadius: 6, fontWeight: 700 }
+        }
+      },
+      MuiCard: {
+        styleOverrides: {
+          root: { borderRadius: 6 }
+        }
+      }
+    },
+    palette: {
+      light: {
+        // Papel, añil and grana from the Trama brand (decision 0008). Maíz
+        // (#d9a23a) is too light for text, so warning uses a darker shade.
+        background: { default: '#f5efe3', paper: '#fffdf8' },
+        primary: { main: '#2b3a73', contrastText: '#fffdf8' },
+        secondary: { main: '#9e2f35', contrastText: '#fffdf8' },
+        warning: { main: '#8a5710', contrastText: '#fffdf8' }
+      },
+      dark: {
+        background: { default: '#14182a', paper: '#1e2338' },
+        primary: { main: '#a9b7f2', contrastText: '#14182a' },
+        secondary: { main: '#ec8f88', contrastText: '#14182a' },
+        warning: { main: '#e2b45a', contrastText: '#14182a' }
+      }
+    }
+  },
   udg: {
     fontFamily: DEFAULT_FONT,
     muiComponents: {
@@ -169,7 +227,14 @@ export function buildMuiThemeOptions({
       ...(palette.warning && { warning: palette.warning })
     },
     typography: {
-      fontFamily: definition.fontFamily
+      fontFamily: definition.fontFamily,
+      ...(definition.headingFontFamily &&
+        Object.fromEntries(
+          (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const).map(variant => [
+            variant,
+            { fontFamily: definition.headingFontFamily }
+          ])
+        ))
     },
     components: {
       ...definition.muiComponents,

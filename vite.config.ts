@@ -22,9 +22,16 @@ export default defineConfig(({ mode }) => {
   // the logo; without them the manifest falls back to the logo.
   const icon = env.VITE_APP_ICON_URL
   const maskableIcon = env.VITE_APP_MASKABLE_ICON_URL
-  const theme = ['udg', 'default', 'west-coast'].includes(env.VITE_APP_THEME)
+  const theme = ['udg', 'default', 'west-coast', 'trama'].includes(
+    env.VITE_APP_THEME
+  )
     ? env.VITE_APP_THEME
     : 'udg'
+  // Colours of index.html's loading shell and theme-color, per theme.
+  const shell =
+    theme === 'trama'
+      ? { ink: '#2b3a73', paper: '#f5efe3' }
+      : { ink: '#202945', paper: '#f4f7fa' }
   const escapedName = name.replace(
     /[&<>"']/g,
     char =>
@@ -103,13 +110,19 @@ export default defineConfig(({ mode }) => {
       {
         name: 'deployment-brand',
         transformIndexHtml(html) {
-          return html
-            .replaceAll('Cartera UdeG', escapedName)
-            .replace(
-              '<link rel="icon" type="image/svg+xml" href="/favicon.ico"/>',
-              iconLinks
-            )
-            .replace("? stored : 'udg'", `? stored : '${theme}'`)
+          return (
+            html
+              .replaceAll('Cartera UdeG', escapedName)
+              .replace(
+                '<link rel="icon" type="image/svg+xml" href="/favicon.ico"/>',
+                iconLinks
+              )
+              .replace("? stored : 'udg'", `? stored : '${theme}'`)
+              // The loading shell and browser chrome paint before the theme
+              // CSS loads, so they take the default theme's colours here.
+              .replaceAll('#202945', shell.ink)
+              .replaceAll('#f4f7fa', shell.paper)
+          )
         },
         configureServer(server) {
           server.middlewares.use((req, res, next) => {

@@ -9,7 +9,7 @@ export type ThemeMode = 'light' | 'dark'
 /**
  * Register new themes here and add a matching src/themes/<id>.css file.
  */
-export const APP_THEME_IDS = ['default', 'west-coast', 'udg'] as const
+export const APP_THEME_IDS = ['default', 'west-coast', 'udg', 'trama'] as const
 
 export type AppThemeId = (typeof APP_THEME_IDS)[number]
 
