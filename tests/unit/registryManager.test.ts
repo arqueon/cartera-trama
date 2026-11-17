@@ -68,11 +68,12 @@ const ISSUER_METADATA = {
   institution_additional_information: { legal_name: 'Example University Inc' }
 }
 
-async function loadRegistryManager() {
+async function loadRegistryManager(extraRegistries: unknown[] = []) {
   vi.resetModules()
   vi.doMock('@/app.config', () => ({
     KNOWN_REGISTRIES_URL: DIRECT_REGISTRIES_URL,
     KnownDidRegistries: FALLBACK_REGISTRIES,
+    EXTRA_ISSUER_REGISTRIES: extraRegistries,
     CORS_PROXY_URL: PROXY_BASE_URL
   }))
 
@@ -230,6 +231,36 @@ describe('registryManager', () => {
 
     expect(result.matchingIssuers).toEqual([])
     expect(result.uncheckedRegistries).toEqual([LEGACY_REGISTRY])
+  })
+
+  it('also checks the deployment extra registries, on the list and on the fallback', async () => {
+    const EXTRA_URL = 'https://instance.example/registro/emisores.json'
+    const extra = [
+      { type: 'dcc-legacy', name: 'Instance registry', url: EXTRA_URL }
+    ]
+    const fetchMock = stubFetch({
+      [DIRECT_REGISTRIES_URL]: () => registriesResponse(),
+      [LEGACY_URL]: () => jsonResponse({ registry: {} }),
+      [EXTRA_URL]: () => jsonResponse(LEGACY_BODY)
+    })
+
+    const { registryManager } = await loadRegistryManager(extra)
+    const result = await registryManager.lookupDid(DID)
+
+    expect(fetchMock).toHaveBeenCalledWith(EXTRA_URL, expect.anything())
+    expect(result.matchingIssuers).toHaveLength(1)
+
+    vi.unstubAllGlobals()
+    stubFetch({
+      [DIRECT_REGISTRIES_URL]: () => {
+        throw new TypeError('Failed to fetch')
+      },
+      [FALLBACK_URL]: () => jsonResponse({ registry: {} }),
+      [EXTRA_URL]: () => jsonResponse(LEGACY_BODY)
+    })
+    const fallback = await loadRegistryManager(extra)
+    const viaFallback = await fallback.registryManager.lookupDid(DID)
+    expect(viaFallback.matchingIssuers).toHaveLength(1)
   })
 
   it('uses fallback KnownDidRegistries when the direct fetch fails', async () => {

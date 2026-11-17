@@ -3,6 +3,7 @@
  * constants.
  */
 import type { EntityIdentityRegistry } from '@interop/verifier-core'
+import { parseExtraIssuerRegistries } from '@/lib/extraIssuerRegistries'
 import {
   CONTACTS_COLLECTION,
   CONTACTS_HISTORY_COLLECTION
@@ -448,6 +449,14 @@ export const KnownDidRegistries: EntityIdentityRegistry[] = [
     url: 'https://digitalcredentials.github.io/dcc-registry/registry.json'
   }
 ]
+
+/**
+ * Issuer registries this deployment adds to the known list and to the
+ * fallback (`VITE_EXTRA_ISSUER_REGISTRIES`, a JSON array of `{ name, url }`
+ * `dcc-legacy` list files over https; see `src/lib/extraIssuerRegistries.ts`).
+ */
+export const EXTRA_ISSUER_REGISTRIES: EntityIdentityRegistry[] =
+  parseExtraIssuerRegistries(env.VITE_EXTRA_ISSUER_REGISTRIES)
 
 export const KNOWN_EXTENSIONS =
   /\.(json|jsonld|ldjson|txt|md|pdf|png|jpg|jpeg|webp|svg|csv|xml|yaml|yml)$/i

@@ -28,7 +28,12 @@ import { RegistryClient } from '@digitalcredentials/issuer-registry-client'
 import type { LookupResult } from '@digitalcredentials/issuer-registry-client'
 import type { EntityIdentityRegistry } from '@interop/verifier-core'
 import { base64urlnopad } from '@scure/base'
-import { KNOWN_REGISTRIES_URL, KnownDidRegistries } from '@/app.config'
+import {
+  EXTRA_ISSUER_REGISTRIES,
+  KNOWN_REGISTRIES_URL,
+  KnownDidRegistries
+} from '@/app.config'
+import { withExtraIssuerRegistries } from './extraIssuerRegistries'
 import {
   clearDirectFetchFailures,
   corsProxyFetch,
@@ -170,10 +175,16 @@ async function ensureRegistries(): Promise<EntityIdentityRegistry[]> {
     return cachedRegistries
   }
   try {
-    cachedRegistries = await loadRegistries()
+    cachedRegistries = withExtraIssuerRegistries(
+      await loadRegistries(),
+      EXTRA_ISSUER_REGISTRIES
+    )
   } catch (err) {
     log.warn('Using fallback KnownDidRegistries', { err })
-    return KnownDidRegistries
+    return withExtraIssuerRegistries(
+      KnownDidRegistries,
+      EXTRA_ISSUER_REGISTRIES
+    )
   }
   return cachedRegistries
 }
