@@ -912,6 +912,7 @@
       "InProgress": "In progress"
     },
     "udg": {
+      "registries": "Listed in: {{names}}",
       "accredits": "What it certifies",
       "evaluated": "How it was assessed",
       "linked": "Linked to this wallet",

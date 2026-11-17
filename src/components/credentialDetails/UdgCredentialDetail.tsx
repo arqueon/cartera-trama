@@ -23,6 +23,7 @@ import type { UseVerificationReturn } from '@/hooks/useVerification'
 import type { CredentialDetailActions } from '@/types/credentialActions'
 import type { getUdgCredential } from '@/lib/viewMappers/udgCredential'
 import { formatDate } from '@/lib/viewMappers/formatDate'
+import { getRegistryNames } from '@/lib/viewMappers/issuerRegistryInfo'
 import { getProofCreatedIso } from '@/lib/getProofCreatedIso'
 import { AchievementResults } from './AchievementResults'
 import { CredentialActions } from './CredentialActions'
@@ -54,6 +55,11 @@ export function UdgCredentialDetail({
 }) {
   const { t, i18n } = useTranslation()
   const label = (key: string) => t(`credential.udg.${key}`)
+  // Which registry recognized the issuer (e.g. an instance's demo registry), so
+  // "known issuer" never hides that an organization is only a demonstration.
+  const registryNames = getRegistryNames(
+    verification.issuerRegistry?.matchingIssuers ?? []
+  )
   const date = (value: unknown, civil = false) =>
     value
       ? formatDate({ isoDate: String(value), locale: i18n.language, civil })
@@ -153,6 +159,17 @@ export function UdgCredentialDetail({
               <Typography sx={{ fontWeight: 600 }}>
                 {data.issuerName}
               </Typography>
+              {registryNames.length > 0 && (
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  data-testid="udg-issuer-registries"
+                >
+                  {t('credential.udg.registries', {
+                    names: registryNames.join(' · ')
+                  })}
+                </Typography>
+              )}
             </Box>
           </Stack>
         )}

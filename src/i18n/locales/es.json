@@ -912,6 +912,7 @@
       "InProgress": "En curso"
     },
     "udg": {
+      "registries": "Reconocido en: {{names}}",
       "accredits": "Qué acredita",
       "evaluated": "Cómo se evaluó",
       "linked": "Vinculada a esta cartera",
