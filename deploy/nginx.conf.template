@@ -25,6 +25,15 @@ map $uri $was_nosniff {
   default      "";
 }
 
+# The SPA's own policy, the same one nginx-static.conf sends: the inline
+# script is the initial theme loader, inline styles support MUI,
+# wasm-unsafe-eval supports Argon2 and blob workers the QR scanner. Defined once
+# here because every location below sets its own add_header, which drops the
+# server-level ones.
+map $host $wallet_csp {
+  default "default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https:; worker-src 'self' blob:; frame-src https://authn.io; frame-ancestors 'self' https://authn.io; object-src 'none'; base-uri 'self'; form-action 'self'";
+}
+
 server {
   listen 8080;
   listen [::]:8080;
@@ -78,6 +87,10 @@ server {
     try_files $uri =404;
     add_header Cache-Control "public, max-age=31536000, immutable";
     add_header Access-Control-Allow-Origin "*";
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy no-referrer always;
+    add_header Permissions-Policy "camera=(self), microphone=(), geolocation=()" always;
+    add_header Content-Security-Policy $wallet_csp always;
   }
 
   # Everything else: a public/ file if one matches, otherwise the SPA entry
@@ -86,5 +99,9 @@ server {
     try_files $uri /index.html;
     add_header Cache-Control "no-cache";
     add_header Access-Control-Allow-Origin "*";
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy no-referrer always;
+    add_header Permissions-Policy "camera=(self), microphone=(), geolocation=()" always;
+    add_header Content-Security-Policy $wallet_csp always;
   }
 }
